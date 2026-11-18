@@ -35,6 +35,18 @@ def list_tasks() -> None:
         mark = "x" if task["done"] else " "
         print(f"{number}. [{mark}] {task['title']}")
 
+def complete_task(number: int) -> None:
+    """Mark the task complete."""
+    tasks = load_tasks()
+    if number <= 0 or number > len(tasks):
+        print(f"No task number {number}")
+        return
+    task = tasks[number - 1]      
+    task["done"] = True          
+    save_tasks(tasks)            
+    print(f"Completed: {task['title']}")
+
+
 def main() -> None:
     """Read the command line and run the matching command."""
     parser = argparse.ArgumentParser(description = "A simple todo list.")
@@ -43,7 +55,11 @@ def main() -> None:
     add_parser = subparsers.add_parser("add", help ="Add a task")
     add_parser.add_argument("title", help ="What you need to do")
 
+    done_parser = subparsers.add_parser("done", help = "Mark a task as done")
+    done_parser.add_argument("number",type=int, help = "Task number from the list")
+
     subparsers.add_parser("list", help = "Show all tasks")
+    
 
     args = parser.parse_args()
 
@@ -51,7 +67,8 @@ def main() -> None:
         add_task(args.title)
     elif args.command == "list":
         list_tasks()
-
+    elif args.command == "done":
+        complete_task(args.number)
 
 if __name__ == "__main__":
     main()
