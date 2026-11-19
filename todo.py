@@ -46,6 +46,20 @@ def complete_task(number: int) -> None:
     save_tasks(tasks)            
     print(f"Completed: {task['title']}")
 
+def delete_task(number : int) -> None:
+    """Delete the completed task"""
+    tasks = load_tasks()
+    if number <= 0 or number > len(tasks):
+        print(f"No task number {number}")
+        return
+    task = tasks[number-1]
+    if task["done"]:
+        tasks.pop(number-1)
+        save_tasks(tasks)   
+        print(f"Task {task['title']} is deleted")
+    else:
+        print(f"Task {task['title']} is not done yet.")
+
 
 def main() -> None:
     """Read the command line and run the matching command."""
@@ -58,9 +72,11 @@ def main() -> None:
     done_parser = subparsers.add_parser("done", help = "Mark a task as done")
     done_parser.add_argument("number",type=int, help = "Task number from the list")
 
+    delete_parser = subparsers.add_parser("delete", help="Delete a completed task")
+    delete_parser.add_argument('number', type=int, help = "Task number for deletion")
+
     subparsers.add_parser("list", help = "Show all tasks")
     
-
     args = parser.parse_args()
 
     if args.command == "add" :
@@ -69,6 +85,8 @@ def main() -> None:
         list_tasks()
     elif args.command == "done":
         complete_task(args.number)
+    elif args.command == "delete":
+        delete_task(args.number)
 
 if __name__ == "__main__":
     main()
